@@ -1,4 +1,6 @@
 import mysql.connector
+from mysql.connector import errorcode
+
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -7,44 +9,23 @@ mydb = mysql.connector.connect(
     database="alx_book_store"
 )
 
-mycursor = mydb.cursor()
+try:
+    connection = mysql.connector.connect(mydb)
+    cursor = connection.cursor()
 
-CREATE DATABASE IF NOT EXISTS alx_book_store;
+    # Create the database
+    cursor.execute("CREATE DATABASE alx_book_store")
 
-CREATE TABLE BOOKS (
-    book_id INTEGER PRIMARY KEY,
-    title VARCHAR(130),
-    author_id INTEGER,
-    price DOUBLE,
-    publication_date DATE,
-    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+    print("Database 'alx_book_store' created successfully!")
 
-);
-
-CREATE TABLE Authors (
-    author_id INTEGER PRIMARY KEY,
-    author_name VARCHAR(215)
-);
-
-CREATE TABLE Customers (
-    customer_id INTEGER PRIMARY KEY,
-    customer_name VARCHAR(215),
-    email VARCHAR(215),
-    address TEXT
-);
-
-CREATE TABLE Orders (
-    order_id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    order_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
-);
-
-CREATE TABLE Order_Details (
-    order_detail_id INTEGER PRIMARY KEY,
-    order_id INTEGER,
-    book_id INTEGER,
-    quantity DOUBLE,
-    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
-    FOREIGN KEY (book_id) REFERENCES Books(book_id)
-);
+except mysql.connector.Error as err:
+    if err.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not exist.")
+    elif err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("Access denied: check your username and password.")
+    else:
+        print(f"Error: {err}")
+finally:
+    # Clean up and close the connection
+    cursor.close()
+    connection.close()
