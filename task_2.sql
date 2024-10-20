@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Orders (
 );
 
 -- Create order_details table
-CREATE TABLE IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS Order_Details (
     order_detail_id INTEGER PRIMARY KEY,
     order_id INTEGER,
     book_id INTEGER,
@@ -46,3 +46,4 @@ CREATE TABLE IF NOT EXISTS (
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (book_id) REFERENCES Books(book_id)
 );
+
